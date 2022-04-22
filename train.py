@@ -8,6 +8,7 @@ from torch.utils.data import DataLoader
 from model import Generator, Discriminator
 from tqdm import tqdm
 from dataset import MyImageFolder
+import pywt
 
 torch.backends.cudnn.benchmark = True
 
@@ -42,6 +43,9 @@ def train_fn(loader, disc, gen, opt_gen, opt_disc, mse, bce, vgg_loss):
         adversarial_loss = 1e-3 * bce(disc_fake, torch.ones_like(disc_fake))
         #loss_for_vgg = 0.006 * vgg_loss(fake, high_res)
         #gen_loss = loss_for_vgg + adversarial_loss
+        coeffs = pywt.dwt2(low_res, 'haar')
+        cA, (cH, cV, cD) = coeffs
+
 
         gen_loss = adversarial_loss
         opt_gen.zero_grad()
